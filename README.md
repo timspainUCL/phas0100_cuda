@@ -1,6 +1,9 @@
 # phas0100_cuda
 CUDA exercises for PHAS0100
 
+# Create the output directories
+* Create `Scratch` and `Scratch/ouput` in your home directories to collect output files.
+
 # How to compile and run the examples and exercises
 
 1. Log on to Myriad following the instructions in the [Research Computing Documentation](https://www.rc.ucl.ac.uk/docs/howto/#how-do-i-log-in).
