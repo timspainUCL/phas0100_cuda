@@ -16,7 +16,7 @@ inline void cudaErrorCheck(cudaError_t err, const char* file, int line)
 {
   if (err != cudaSuccess) {
     std::cerr << "CUDA error: " << cudaGetErrorString(err) << " at " << file << ":" << line << std::endl;
-    exit(code);
+    exit(err);
   }
 }
 
@@ -29,7 +29,7 @@ const int size = 256;
 const int nSingleBlocks = 1;
 const int nMultiBlocks = 4;
 const int nBlocks = nSingleBlocks;
-const int nThreads 256;
+const int nThreads = 256;
 
 // The negation kernel with a single block
 __global__
@@ -54,7 +54,7 @@ int main( )
 
   // Allocate the memory for the arrays on the host
   float *hostArray = (float *) malloc(sizeChar);
-  float *houstOutput = (float *) malloc(sizeChar);
+  float *hostOutput = (float *) malloc(sizeChar);
 
   // Alocate the memory for the array on the device
   float *devArray;
