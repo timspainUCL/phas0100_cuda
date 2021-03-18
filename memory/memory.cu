@@ -19,7 +19,7 @@ inline void cudaErrorCheck(cudaError_t err, const char* file, int line)
 static __constant__ int deviceArraySize_;
 
 // CUDA threads per block
-static int nThreads = 128;
+#define nThreads 128;
 
 // Array reversing kernel
 __global__
@@ -33,7 +33,7 @@ void reverse(float* devA, float* devB)
   __syncthreads();
 
   // Offset to the correct index in the target array
-  int blockOffset = deviceArraySize - (blockIdx.x + 1)*blockDim.x;
+  int blockOffset = deviceArraySize_ - (blockIdx.x + 1)*blockDim.x;
   devB[blockOffset + threadIdx.x] = tmp[threadIdx.x];
 }
 
@@ -79,7 +79,7 @@ int main( )
   dim3 blocksPerGrid(hostArraySize/nThreads);
   dim3 threadsPerBlock(nThreads);
 
-  reverseArray<<<blocksPerGrid, threadsPerBlock>>>(devIn, devOut);
+  reverse<<<blocksPerGrid, threadsPerBlock>>>(devIn, devOut);
 
   // Wait for all threads to complete
   myCudaCheck(
@@ -88,7 +88,7 @@ int main( )
 
   // Copy the result array back to the host
   myCudaCheck(
-	      cudaMemcpy(hostOut, devOut, sizeChar, cudaMemcpyDevicetoHost)
+	      cudaMemcpy(hostOut, devOut, sizeChar, cudaMemcpyDeviceToHost)
 	      );
 
   // Check and print the result
