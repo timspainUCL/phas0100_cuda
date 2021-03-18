@@ -1,8 +1,4 @@
 /*
- * Solution to the introductory CUDA exercise
- */
-
-/*
  * A simple CUDA exercise that negates an array of floats.
  * Introduces device memory management and kernel invocation.
  */
@@ -35,15 +31,15 @@ const int nThreads = 256;
 __global__
 void negate(float *devArray)
 {
-  int idx = threadIdx.x;
-  devArray[idx] = -1. * devArray[idx];
+  // HANDSON 1.7 Get the index of this block in the grid
+  // HANDSON 1.8 Negate the value at that index
 }
 
 __global__
 void negateMultiBlock(float *devArray)
 {
-  int idx = threadIdx.x + (blockIdx.x * blockDim.x);
-  devArray[idx] = -1. * devArray[idx];
+  // HANDSON 1.9 Calculate the index of this block in the grid
+  // HANDSON 1.10 Negate the value at that index
 }
 
 // Host main function
@@ -56,9 +52,10 @@ int main( )
   float *hostArray = (float *) malloc(sizeChar);
   float *hostOutput = (float *) malloc(sizeChar);
 
-  // Alocate the memory for the array on the device
-  float *devArray;
-  myCudaCheck( cudaMalloc(&devArray, sizeChar) );
+  // HANDSON 1.1 Alocate the memory for the array on the device
+  myCudaCheck(
+
+             );
 
   // Initialize the input array
   for (int i = 0; i < size; i++) {
@@ -66,20 +63,24 @@ int main( )
     hostOutput[i] = 0;
   }
 
-  // Copy the data from the host to the device
-  myCudaCheck( cudaMemcpy(devArray, hostArray, sizeChar, cudaMemcpyHostToDevice) );
+  // HANDSON 1.2 Copy the data from the host to the device
+  myCudaCheck(
+	     
+	      );
 
-  // Run the kernel on the GPU
-  dim3 blocksPerGrid(nBlocks);
-  dim3 threadsPerBlock(nThreads);
+  // HANDSON 1.5 Run the kernel on the GPU
 
-  negate<<<blocksPerGrid, threadsPerBlock>>>(devArray);
+  // <<< , >>>();
 
-  // Synchronise with the device
-  myCudaCheck( cudaDeviceSynchronize() );
+  // HANDSON 1.6 Synchronise with the device
+  myCudaCheck(
 
-  // Copy the results back to the host
-  myCudaCheck( cudaMemcpy(hostOutput, devArray, sizeChar, cudaMemcpyDeviceToHost) );
+	      );
+
+  // HANDSON 1.3 Copy the results back to the host
+  myCudaCheck(
+	      
+	      );
 
   // Print the result
   std::cout << "Output array:" << std::endl;
@@ -87,8 +88,10 @@ int main( )
     std::cout << hostOutput[i] << std::endl;
   }
 
-  // Free the device arrays
-  myCudaCheck( cudaFree(devArray) );
+  // HANDSON 1.4 Free the device arrays
+  myCudaCheck(
+
+	      );
 
   // Free the host arrays
   free(hostArray);
