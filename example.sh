@@ -28,4 +28,4 @@ module load compilers/gnu/4.9.2
 module load cuda/7.5.18/gnu-4.9.2
 
 # Run the application
-CUDAexample
+../build/CUDAexample
