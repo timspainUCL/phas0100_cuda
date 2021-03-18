@@ -19,7 +19,7 @@ inline void cudaErrorCheck(cudaError_t err, const char* file, int line)
 static __constant__ int deviceArraySize_;
 
 // CUDA threads per block
-#define nThreads 128;
+#define nThreads 128
 
 // Array reversing kernel
 __global__
