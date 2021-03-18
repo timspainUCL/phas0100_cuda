@@ -15,8 +15,8 @@ inline void cudaErrorCheck(cudaError_t err, const char* file, int line)
   }
 }
 
-// Array size stored in device constant memory
-static __constant__ int deviceArraySize_;
+// Array size
+#define ARRAY_SIZE 65536
 
 // CUDA threads per block
 #define nThreads 128
@@ -25,25 +25,17 @@ static __constant__ int deviceArraySize_;
 __global__
 void reverse(float* devA, float* devB)
 {
-  // temporary array for space for the swap
-  __shared__ float tmp[nThreads];
-
+  // Get the index in this block
   int idx = blockIdx.x * blockDim.x + threadIdx.x;
-  tmp[nThreads - (threadIdx.x+1)] = devA[idx];
-  __syncthreads();
-
-  // Offset to the correct index in the target array
-  int blockOffset = deviceArraySize_ - (blockIdx.x + 1)*blockDim.x;
-  devB[blockOffset + threadIdx.x] = tmp[threadIdx.x];
+  // Reverse the  elements
+  devB[idx] = devA[ARRAY_SIZE - (idx + 1)];
 }
 
 // Main host function
 int main( )
 {
-  // Array size stored on the host
-  const int hostArraySize = 65536;
   // size of the array in char
-  size_t sizeChar = hostArraySize * sizeof(float);
+  size_t sizeChar = ARRAY_SIZE * sizeof(float);
 
   // Allocate host memory
   float* hostIn = (float*) malloc(sizeChar);
@@ -60,15 +52,10 @@ int main( )
 	      );
 
   // Initialize the arrays
-  for (int i = 0; i < hostArraySize; i++) {
+  for (int i = 0; i < ARRAY_SIZE; i++) {
     hostIn[i] = i;
     hostOut[i] = 0;
   }
-
-  // Copy the size of the array from the host to the device.
-  myCudaCheck(
-	      cudaMemcpyToSymbol( deviceArraySize_, &hostArraySize, sizeof(int))
-	      );
 
   // Copy the input array from the host to the device
   myCudaCheck(
@@ -76,7 +63,7 @@ int main( )
 	      );
 
   // Define the size of the task
-  dim3 blocksPerGrid(hostArraySize/nThreads);
+  dim3 blocksPerGrid(ARRAY_SIZE/nThreads);
   dim3 threadsPerBlock(nThreads);
 
   reverse<<<blocksPerGrid, threadsPerBlock>>>(devIn, devOut);
@@ -93,10 +80,10 @@ int main( )
 
   // Check and print the result
   int nCorrect = 0;
-  for (int i = 0; i < hostArraySize; i++) {
-    nCorrect += (hostOut[i] == hostIn[hostArraySize - (i+1)]) ? 1 : 0;
+  for (int i = 0; i < ARRAY_SIZE; i++) {
+    nCorrect += (hostOut[i] == hostIn[ARRAY_SIZE - (i+1)]) ? 1 : 0;
   }
-  std::cout << ((nCorrect == hostArraySize) ? "Success! " : "Failure: ");
+  std::cout << ((nCorrect == ARRAY_SIZE) ? "Success! " : "Failure: ");
   std::cout << nCorrect  << " elements were correctly swapped." << std::endl;
 
   // Free device memory

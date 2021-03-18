@@ -1,4 +1,8 @@
 /*
+ * Solution to the CUDA memory exercise
+ */
+
+/*
  * An exercise on the different types of memory available in CUDA
  */
 
