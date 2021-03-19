@@ -15,7 +15,7 @@
 #$ -l tmpfs=1G
 
 # Set the name of the job.
-#$ -N CUDAExample
+#$ -N CUDAexample
 
 # Set the working directory to somewhere in your scratch space.
 # Replace "<your_UCL_id>" with your UCL user ID
